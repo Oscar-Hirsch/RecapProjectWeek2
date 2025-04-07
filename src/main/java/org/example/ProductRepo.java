@@ -6,7 +6,7 @@ import java.util.Objects;
 
 public class ProductRepo {
 
-    List<Product> products = new ArrayList<>();
+    public List<Product> products = new ArrayList<>();
 
     public ProductRepo() {
     }
@@ -23,9 +23,9 @@ public class ProductRepo {
         return products;
     }
 
-    public Product getSingleProduct(String name) {
+    public Product getSingleProduct(String id) {
         for (Product product : products) {
-            if (product.productName().equals(name)) {
+            if (product.id().equals(id)) {
                 return product;
             }
         }

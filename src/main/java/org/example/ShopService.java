@@ -4,34 +4,34 @@ import java.util.*;
 public class ShopService {
 
     ProductRepo productRepo;
-    public OrderListRepo orderListRepo = new OrderListRepo();
+    public OrderListRepo orderListRepo;
     public static int orderID;
 
-    public ShopService() {
+    public ShopService(OrderListRepo orderListRepo, ProductRepo productRepo) {
+        this.orderListRepo = orderListRepo;
+        this.productRepo = productRepo;
     }
 
     public void createOrder(List<String> productIDs) {
         List<Product> products = new ArrayList<>();
         boolean orderSucess = true;
         for (String productID : productIDs) {
-
-            for (Product productInStock: productRepo.getAllProducts()) {
-                if (!productInStock.id().equals(productID)) {
-                    System.out.println(productInStock.productName() + " is not in stock");
-                    orderSucess = false;
-                } else {
-                    products.add(productInStock);
-                }
-            }
-            if (orderSucess) {
-                orderID++;
-                Order order = new Order(products, String.valueOf(orderID));
-                orderListRepo.addOrder(order);
-                System.out.println("Order with OrderID " + order.orderID() + "created.");
+            Product product = productRepo.getSingleProduct(productID);
+            if (product == null) {
+                orderSucess = false;
+                break;
             } else {
-                System.out.println("Order could not be created.");
+                products.add(product);
             }
+        }
 
+        if (orderSucess) {
+            orderID++;
+            Order order = new Order(products, String.valueOf(orderID));
+            orderListRepo.addOrder(order);
+            System.out.println("Order with OrderID=" + order.orderID() + " created.");
+        } else {
+            System.out.println("Order could not be created.");
         }
     }
 }
