@@ -12,16 +12,24 @@ public class ShopService {
         this.productRepo = productRepo;
     }
 
-    public void createOrder(List<String> productIDs) {
+    public void createOrder(Map<String, Integer> productIDs) {
         List<Product> products = new ArrayList<>();
         boolean orderSucess = true;
-        for (String productID : productIDs) {
+        for (String productID : productIDs.keySet()) {
             Product product = productRepo.getSingleProduct(productID);
             if (product == null) {
                 orderSucess = false;
                 break;
             } else {
-                products.add(product);
+                if (productIDs.get(productID) <= product.quantity()) {
+                    products.add(product);
+                    Product updatedProduct = new Product(product.productName(), product.id(), product.price(), product.quantity());
+                    productRepo.addProducts(updatedProduct);
+                } else {
+                    orderSucess = false;
+                    break;
+                }
+
             }
         }
 
